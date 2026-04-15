@@ -1,0 +1,18 @@
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Data (keep raw small files if you want)
+data/processed/*
+!data/processed/.gitkeep
+
+# Optional: ignore large raw files
+# data/raw/*

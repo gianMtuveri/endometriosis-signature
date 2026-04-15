@@ -15,4 +15,7 @@ data/processed/*
 !data/processed/.gitkeep
 
 # Optional: ignore large raw files
-# data/raw/*
+
+# Keep folder structure
+data/raw/*
+!data/raw/.gitkeep

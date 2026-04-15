@@ -18,6 +18,14 @@ The goal is not only predictive performance, but also interpretability and struc
 
 The dataset consists of endometrial tissue samples from patients with and without endometriosis, including metadata describing tissue type and disease severity.
 
+Files needed:
+
+GPL570-tbl-1.txt
+
+GSE51981_family.xml
+
+GSE51981_series_matrix.txt
+
 ---
 
 ## Methodology

@@ -1,0 +1,2 @@
+dataset,platform,n_genes_used,genes_used,n_samples,n_positive,n_negative,roc_auc,pr_auc,notes
+GSE25628,GPL571,2,"ZNF24,NT5DC3",14,8,6,0.7708333333333333,0.8943452380952381,Pathological (ectopic) vs Normal (control); eutopic excluded

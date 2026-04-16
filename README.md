@@ -2,11 +2,9 @@
 
 ## Overview
 
-This project implements a reproducible pipeline to identify a compact gene expression signature associated with endometriosis using publicly available transcriptomic data.
+This project aims to identify a compact and robust gene expression signature associated with endometriosis using publicly available transcriptomic datasets.
 
-The approach combines data preprocessing, machine learning, feature stability analysis, and biological annotation to extract a minimal set of genes that collectively capture disease-related signal.
-
-The objective is not only predictive performance, but also interpretability and robustness across datasets.
+The goal is to extract a minimal, interpretable set of genes that retains predictive power while generalizing across independent datasets and experimental platforms.
 
 ---
 
@@ -17,123 +15,126 @@ The objective is not only predictive performance, but also interpretability and 
 - Platform: Affymetrix GPL570 (microarray)  
 - Samples: Endometriosis vs healthy controls  
 
-### External Validation Dataset
+### External Validation Datasets
+
+**1. RNA-seq (cross-platform validation)**  
 - GEO: GSE135485  
 - Platform: RNA-seq  
-- Used for cross-dataset validation  
+
+**2. Microarray (cross-study validation)**  
+- GEO: GSE25628  
+- Platform: GPL571 (microarray)  
 
 ---
 
 ## Methodology
 
-### 1. Data Preparation
-- Expression matrix transposed to (samples × genes)
-- Metadata extracted from GEO XML
-- Binary classification target:
-  - `1` → Endometriosis  
-  - `0` → Healthy  
+### 1. Data Cleaning and Cohort Definition
 
-### 2. Cohort Filtering
-To reduce confounding:
+The original dataset contained heterogeneous control groups. To reduce confounding:
+
 - Included:
   - Endometriosis patients  
   - Healthy controls without uterine pathology  
+
 - Excluded:
   - Other pathological conditions  
 
 ---
 
-### 3. Baseline Model
-- Logistic regression
-- Variance filtering
-- Standard scaling
-- 5-fold cross-validation
+### 2. Baseline Modeling
+
+- Logistic Regression  
+- Variance filtering  
+- Standard scaling  
+- 5-fold cross-validation  
 
 ---
 
-### 4. Feature Stability Analysis
-- Model trained across CV folds
-- Top features selected per fold
-- Feature occurrence counted
+### 3. Feature Stability Analysis
 
-This identifies **stable predictors** rather than noisy correlations.
+Features were selected based on **stability across cross-validation folds**, rather than a single model fit.
 
----
-
-### 5. Feature Ranking
-Features are ranked based on:
-- Stability across folds  
-- Coefficient magnitude  
+This reduces overfitting and identifies consistently predictive genes.
 
 ---
 
-### 6. Signature Extraction
-A compact gene signature is constructed from the top-ranked features.
+### 4. Signature Extraction
+
+A compact gene signature was derived from the most stable and predictive features.
 
 ---
 
-### 7. Signature Size Optimization
-Performance is evaluated as a function of signature size:
+### 5. Signature Size Optimization
 
-- 2–14 genes tested  
-- ROC-AUC computed for each  
-- Plateau identified  
+- Performance plateau observed at ~7 genes  
+- Indicates a **low-dimensional biological signal**
 
 ---
 
 ## Key Results
 
+### Summary Table
+
+| Dataset            | Platform    | Genes Used | Samples | ROC-AUC | Notes |
+|-------------------|------------|------------|--------|--------|------|
+| Internal (CV)     | Microarray | ~7         | 109    | ~0.94  | Clean cohort |
+| GSE135485         | RNA-seq    | 6          | 58     | 0.66   | Strong imbalance (54 vs 4) |
+| GSE25628          | Microarray | 2          | 14     | **0.77** | Independent study |
+
+---
+
 ### Internal Validation (GSE51981)
-- Full model (54k features):  
-  - ROC-AUC ≈ 0.93  
-
-- Compact signature (~7 genes):  
-  - ROC-AUC ≈ 0.95  
-
-### Interpretation
-- Signal is **low-dimensional**
-- Additional features are redundant
-- A small subset captures most predictive information
+- ROC-AUC ≈ **0.93–0.95**
+- Compact signature matches full model (~50k features)
 
 ---
 
-## External Validation (GSE135485)
+## External Validation
 
-### Setup
-- Train: microarray dataset (GSE51981)  
-- Test: RNA-seq dataset (GSE135485)  
-- Features: 6 overlapping genes  
-- Preprocessing: log1p transform on RNA-seq  
+### RNA-seq Dataset (GSE135485)
+- ROC-AUC: **0.66**
+- PR-AUC: **0.97** (inflated due to imbalance)
 
-### Results
-- ROC-AUC: **0.66**  
-- PR-AUC: **0.97** *(inflated due to imbalance: 54 positives / 4 negatives)*  
-
-### Interpretation
-- Signal partially generalizes across datasets  
-- Performance drops due to:
-  - platform differences (microarray vs RNA-seq)
-  - cohort differences
-  - extreme class imbalance  
-
-This behavior is consistent with known challenges in transcriptomic machine learning.
+**Interpretation:**
+- Performance decreases due to:
+  - platform shift (microarray → RNA-seq)
+  - distribution differences
+  - class imbalance  
+- Still above random → signal partially generalizes  
 
 ---
 
-## ROC Curve
+### Microarray Dataset (GSE25628)
+- ROC-AUC: **0.77**
+- PR-AUC: **0.89**
+- Samples: 14 (8 pathological vs 6 controls)
 
-![ROC Curve](results/figures/roc_curve.png)
+**Important:**
+- Only **2 genes** overlap with the signature:
+  - ZNF24  
+  - NT5DC3  
 
-The figure illustrates:
-- strong internal performance  
-- reduced external performance  
-- expected generalization gap  
+**Interpretation:**
+- Strong generalization across independent dataset  
+- Minimal gene subset still predictive  
+- Confirms robustness of the signal  
 
 ---
 
-## Identified Signature (Dataset-Specific)
+## ROC Curves
 
-The final signature includes genes such as:
+![ROC Curves](results/figures/roc_curve_all.png)
+
+This figure shows:
+
+- Strong internal performance  
+- Degradation across platforms (RNA-seq)  
+- Robust transfer across independent microarray dataset  
+
+---
+
+## Identified Signature (Core Genes)
 
 - CTU2  
 - ZNF24  
@@ -142,7 +143,18 @@ The final signature includes genes such as:
 - ZNF568  
 - C11orf54  
 
-This represents a **distributed transcriptional signature**, rather than a single biomarker.
+These form a **distributed transcriptional signature**, rather than a single biomarker.
+
+---
+
+## Key Insights
+
+- The predictive signal is **low-dimensional**
+- A small number of genes captures most of the information  
+- The signature:
+  - generalizes across studies  
+  - degrades across platforms  
+- Cross-platform transfer remains a key challenge in transcriptomics  
 
 ---
 
@@ -156,7 +168,9 @@ This represents a **distributed transcriptional signature**, rather than a singl
 ├── scripts/
 │   ├── build_dataset.py
 │   ├── run_signature.py
-│   └── validate_external.py
+│   ├── validate_external.py
+│   ├── validate_gse25628.py
+│   └── plot_roc_all.py
 ├── src/
 │   └── endometriosis_signature/
 ├── results/
@@ -174,12 +188,14 @@ Install:
 pip install -e .
 ```
 
-Run pipeline:
+Run full pipeline:
 
 ```
 python scripts/build_dataset.py
 python scripts/run_signature.py
 python scripts/validate_external.py
+python scripts/validate_gse25628.py
+python scripts/plot_roc_all.py
 ```
 
 ---
@@ -190,8 +206,9 @@ Raw data is not included due to size constraints.
 
 Download from GEO:
 
-- GSE51981: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE51981  
-- GSE135485: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE135485  
+- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE51981  
+- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE135485  
+- https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE25628  
 
 Place files in:
 
@@ -203,19 +220,19 @@ data/raw/
 
 ## Limitations
 
-- Dataset-specific signature  
-- Limited external validation (only 4 controls)  
-- Cross-platform differences  
-- No pathway-level interpretation yet  
+- Small external validation sets  
+- Class imbalance (RNA-seq dataset)  
+- Cross-platform variability  
+- No pathway-level interpretation  
 
 ---
 
 ## Future Work
 
-- External validation on balanced datasets  
-- Pathway enrichment analysis  
-- Sparse models (L1 regularization)  
-- Multi-dataset integration  
+- Validate on larger balanced datasets  
+- Perform pathway enrichment analysis  
+- Explore sparse models (L1 regularization)  
+- Integrate multiple datasets  
 
 ---
 
@@ -224,6 +241,9 @@ data/raw/
 This project demonstrates that endometriosis-related transcriptional patterns can be captured by a compact and stable gene signature.
 
 The results highlight:
+
 - strong internal predictive signal  
-- reduced but meaningful cross-dataset generalization  
-- the importance of stability and dimensionality reduction in high-dimensional biological data
+- robust cross-study generalization  
+- reduced cross-platform transferability  
+
+Overall, this work illustrates both the potential and limitations of machine learning approaches in transcriptomic biomarker discovery.

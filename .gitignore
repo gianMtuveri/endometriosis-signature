@@ -23,9 +23,3 @@ data/processed/*.parquet
 # Keep small results (csv)
 !data/processed/*.csv
 !data/processed/.gitkeep
-
-# Results (figures are OK)
-# If figures become large, uncomment:
-# results/*
-# !results/figures/
-# !results/figures/.gitkeep

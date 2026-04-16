@@ -1,0 +1,2 @@
+n_genes,genes,roc_auc,pr_auc,n_samples,n_positive,n_negative,notes
+6,"CTU2,ZNF24,NT5DC3,HMGN3-AS1,ZNF568,C11orf54",0.662037037037037,0.971547235781143,58,54,4,Cross-platform (microarray→RNA-seq); heavy class imbalance

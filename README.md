@@ -91,61 +91,59 @@ This evaluates robustness across both studies and platforms.
 
 ![Signature Size](results/figures/signature_size_curve.png)
 
-Performance improves rapidly as genes are added, then reaches a plateau at approximately 7 genes.
-
-### Interpretation
-
-This indicates that the predictive signal is low-dimensional. Even though the original dataset contains tens of thousands of probes, most of the useful signal is concentrated in a small subset.
-
-This is one of the key findings of the project:
-- only a few genes are needed to capture most of the predictive information
-- adding more genes eventually provides no meaningful gain
-
----
-
-## Sparse L1 Signature
-
-L1-regularized logistic regression was used to test whether the signal could be compressed further.
-
-### Best sparse configuration
-- ROC-AUC: approximately 0.91
-- Non-zero genes: 3
-- Selected genes:
-  - ZNF24
-  - HMGN3-AS1
-  - ZNF568
-
-### Interpretation
-
-This confirms that the signal is genuinely sparse.
-
-However, external validation shows that the 3-gene signature is less robust than the larger ~7-gene signature, especially across platforms. This suggests that part of the larger signature acts as stabilizing redundancy.
-
-In other words:
-- the 3-gene signature is more interpretable
-- the 7-gene signature is more robust
-
----
-
-## Signature Size Analysis
-
-![Signature Size](results/figures/signature_size_curve.png)
-
-To evaluate the number of genes required to capture the predictive signal, model performance was analyzed as a function of signature size.
+To understand how many genes are needed to capture the predictive signal, model performance was evaluated as a function of signature size.
 
 ### Results
 
-- Performance improves as more genes are added
-- A plateau is reached at approximately **7 genes**
-- Adding additional genes does not improve ROC-AUC
+- Performance increases as genes are added
+- A plateau is reached at approximately **6–8 genes**
+- Adding more genes beyond this range does not improve ROC-AUC
 
 ### Interpretation
 
-This indicates that the endometriosis signal is **low-dimensional** and can be captured by a small subset of genes.
+This behavior indicates that the predictive signal is **low-dimensional**.
 
-Even though the original dataset contains tens of thousands of features, most of the predictive information is concentrated in a compact signature.
+Initially, each additional gene contributes useful information, improving performance. However, after a small number of genes, the model stops improving, meaning that:
 
-This result supports the use of minimal gene panels for downstream applications such as biomarker development.  
+- most of the relevant signal has already been captured
+- additional genes provide redundant or noisy information
+
+In practical terms, this shows that a compact subset of genes is sufficient to model the disease signal, despite the very high dimensionality of the original dataset.
+
+---
+
+## Sparse Signature via L1 Regularization
+
+While the previous analysis identifies the number of genes required for **optimal performance**, we next investigate how much the model can be **compressed** while retaining predictive signal.
+
+### Results
+
+- L1-regularized logistic regression selects a minimal subset of **3 genes**
+- Achieved ROC-AUC ≈ **0.91 ± 0.09**
+- Selected genes:
+  - ZNF24  
+  - HMGN3-AS1  
+  - ZNF568  
+
+### Interpretation
+
+This confirms that the predictive signal is genuinely **sparse**, and that a small core set of genes carries most of the information.
+
+However, external validation shows that this minimal signature is **less robust**, particularly across platforms. This suggests that:
+
+- the 3-gene model captures the core signal
+- the additional genes in the ~7-gene signature provide **stabilizing redundancy**
+
+---
+
+## Key Insight
+
+- ~7 genes are required for **optimal performance**
+- 3 genes are sufficient for a **minimal representation of the signal**
+- the larger signature is more **robust across datasets**
+- the smaller signature is more **interpretable but less transferable**
+
+This highlights a trade-off between **model simplicity** and **generalization performance**.
 
 ---
 

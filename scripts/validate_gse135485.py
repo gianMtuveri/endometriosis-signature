@@ -5,21 +5,31 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score, average_precision_score
 
-# =========================
-# 1. LOAD DATASET 1 (TRAIN)
-# =========================
-
-data = pd.read_parquet("data/processed/endometriosis_clean_filtered.parquet")
+DATASET_NAME = "gse135485"
+SIGNATURE_NAME = "sig3"
 
 # map genes -> probes (from your signature)
-gene_map = {
+'''gene_map = { # genes map for 7 gene signature
     "CTU2": "1561501_s_at",
     "ZNF24": "242210_at",
     "NT5DC3": "234737_at",
     "HMGN3-AS1": "1559404_a_at",
     "ZNF568": "1560779_a_at",
     "C11orf54": "1559623_at",
+}'''
+gene_map = { # genes map for 3 gene signature
+    "ZNF24": "242210_at",
+    "HMGN3-AS1": "1559404_a_at",
+    "ZNF568": "1560779_a_at",
 }
+
+# =========================
+# 1. LOAD DATASET 1 (TRAIN)
+# =========================
+
+
+data = pd.read_parquet("data/processed/endometriosis_clean_filtered.parquet")
+
 
 genes = list(gene_map.keys())
 probes = list(gene_map.values())
@@ -137,7 +147,7 @@ results = pd.DataFrame([
     }
 ])
 
-out_path = "data/processed/external_validation_results.csv"
+out_path = f"data/processed/validation_{DATASET_NAME}_{SIGNATURE_NAME}.csv"
 results.to_csv(out_path, index=False)
 
 print(f"\nSaved external results to: {out_path}")

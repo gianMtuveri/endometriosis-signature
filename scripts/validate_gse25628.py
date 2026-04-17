@@ -23,6 +23,24 @@ GPL571_COLUMNS = [
     "Gene Ontology Molecular Function",
 ]
 
+DATASET_NAME = "gse25628"
+SIGNATURE_NAME = "sig3"
+
+'''signature_genes = [ # genes map for 7 gene signature
+    "CTU2",
+    "ZNF24",
+    "NT5DC3",
+    "HMGN3-AS1",
+    "ZNF568",
+    "C11orf54",
+]'''
+
+signature_genes = [ # genes map for 7 gene signature
+    "ZNF24",
+    "HMGN3-AS1",
+    "ZNF568",
+]
+
 # =========================
 # 1. LOAD GSE25628 MATRIX
 # =========================
@@ -120,15 +138,6 @@ print("\nGene-level GSE25628 shape:", df_gene.shape)
 # 5. DEFINE TRANSFERABLE SIGNATURE
 # =========================
 
-signature_genes = [
-    "CTU2",
-    "ZNF24",
-    "NT5DC3",
-    "HMGN3-AS1",
-    "ZNF568",
-    "C11orf54",
-]
-
 available = [g for g in signature_genes if g in df_gene.index]
 print("\nAvailable signature genes in GSE25628:", available)
 
@@ -205,7 +214,7 @@ results = pd.DataFrame([
     }
 ])
 
-out_path = "data/processed/external_validation_gse25628.csv"
+out_path = f"data/processed/validation_{DATASET_NAME}_{SIGNATURE_NAME}.csv"
 results.to_csv(out_path, index=False)
 
 print(f"\nSaved results to: {out_path}")

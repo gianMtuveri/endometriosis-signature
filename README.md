@@ -122,6 +122,28 @@ A compact gene signature was derived from the most stable and predictive feature
 
 ---
 
+## Signature Size Analysis
+
+![Signature Size](results/figures/signature_size_curve.png)
+
+To evaluate the number of genes required to capture the predictive signal, model performance was analyzed as a function of signature size.
+
+### Results
+
+- Performance improves as more genes are added
+- A plateau is reached at approximately **7 genes**
+- Adding additional genes does not improve ROC-AUC
+
+### Interpretation
+
+This indicates that the endometriosis signal is **low-dimensional** and can be captured by a small subset of genes.
+
+Even though the original dataset contains tens of thousands of features, most of the predictive information is concentrated in a compact signature.
+
+This result supports the use of minimal gene panels for downstream applications such as biomarker development.  
+
+---
+
 ## ROC Curves
 
 ![ROC Curves](results/figures/roc_curve_all.png)

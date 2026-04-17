@@ -192,7 +192,8 @@ These form a **distributed transcriptional signature**, rather than a single bio
 │   ├── run_signature.py
 │   ├── validate_external.py
 │   ├── validate_gse25628.py
-│   └── plot_roc_all.py
+│   ├── plot_roc_all.py
+│   └── plot_signature_size.py
 ├── src/
 │   └── endometriosis_signature/
 ├── results/

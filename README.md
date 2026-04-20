@@ -200,6 +200,37 @@ These results suggest a distributed but compressible transcriptional signature r
 
 ---
 
+### Pathway Enrichment
+
+Pathway enrichment analysis using Enrichr (GO Biological Process) reveals that the identified genes are primarily associated with:
+
+- regulation of transcription  
+- RNA biosynthetic processes  
+- tRNA and RNA modification  
+
+These results form two consistent clusters:
+
+1. **Transcriptional regulation**  
+   Multiple enriched terms relate to regulation of gene expression, particularly RNA polymerase II activity, indicating that the predictive signal is driven by changes in transcriptional control.
+
+2. **RNA-level regulation**  
+   Enrichment in tRNA modification processes suggests an additional layer of post-transcriptional regulation.
+
+Although several enriched terms refer to embryonic development, these likely reflect the general involvement of regulatory genes in developmental programs rather than disease-specific mechanisms.
+
+### Interpretation
+
+Overall, the results indicate that the predictive signal arises from **regulatory mechanisms controlling gene expression**, rather than a single downstream pathway.
+
+This is consistent with the machine learning results, which show that:
+- a small number of genes is sufficient for prediction  
+- the signal is distributed across regulatory elements  
+- no single gene dominates the classification  
+
+Interestingly, classical inflammatory pathways are not strongly enriched, suggesting that the model captures **upstream regulatory differences** rather than downstream effects.
+
+---
+
 ## Project Structure
 
 ```text

@@ -47,7 +47,7 @@ def main() -> None:
     print("\nTop ranked probes:")
     print(ranked[["probe_id", "count", "coef", "Gene Symbol", "Gene Title"]].head(10))
 
-    sweep_df = signature_size_sweep(clf, data, y, ranked, k_min=2, k_max=14)
+    sweep_df = signature_size_sweep(clf, data, y, ranked, k_min=2)
     sweep_df.to_csv(processed_dir / "signature_size_sweep.csv", index=False)
 
     print("\nSignature size sweep:")

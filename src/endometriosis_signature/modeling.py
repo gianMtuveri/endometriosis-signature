@@ -96,9 +96,21 @@ def signature_size_sweep(
     y: pd.Series,
     ranked: pd.DataFrame,
     k_min: int = 2,
-    k_max: int = 14,
+    k_max: int | None = None,
 ) -> pd.DataFrame:
     results = []
+
+    n_available = len(ranked)
+
+    if k_max is None:
+        k_max = n_available
+
+    k_max = min(k_max, n_available)
+
+    if k_min > k_max:
+        raise ValueError(
+            f"k_min={k_min} is larger than available ranked probes ({n_available})"
+        )
 
     for k in range(k_min, k_max + 1):
         sig = ranked.head(k)["probe_id"].tolist()
@@ -108,6 +120,7 @@ def signature_size_sweep(
         results.append(
             {
                 "k": k,
+                "n_features": len(sig),
                 "mean_auc": float(scores_k.mean()),
                 "std_auc": float(scores_k.std()),
             }

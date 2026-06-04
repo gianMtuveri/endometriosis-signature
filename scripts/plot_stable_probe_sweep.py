@@ -4,11 +4,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from sklearn.model_selection import cross_val_score
+
 from endometriosis_signature.dataset import get_feature_columns
 from endometriosis_signature.modeling import make_classifier
 
 
 processed_dir = Path("data/processed")
+figures_dir = Path("results/figures")
+figures_dir.mkdir(parents=True, exist_ok=True)
 
 data = pd.read_parquet(processed_dir / "endometriosis_clean_filtered.parquet")
 feature_cols = get_feature_columns(data)
@@ -16,20 +20,21 @@ feature_cols = get_feature_columns(data)
 X = data[feature_cols]
 y = data["target"]
 
-ranked = pd.read_csv(processed_dir / "ranked_signature_probes.csv")
+stable = pd.read_csv(processed_dir / "stable_probe_counts.csv")
 
-ranked = ranked[
-    ranked["Gene Symbol"].notna()
-    & (ranked["Gene Symbol"].astype(str).str.strip() != "")
-].copy()
+# Keep only probes that are actually present in the expression matrix
+stable = stable[stable["probe_id"].isin(feature_cols)].copy()
 
-top_probes = ranked["probe_id"].tolist()
+# Rank by stability count
+stable = stable.sort_values("count", ascending=False)
 
-print(f"Number of ranked probes available: {len(top_probes)}")
-print("Top probes:")
-print(ranked[["probe_id", "count", "coef", "Gene Symbol"]].head(10))
+top_probes = stable["probe_id"].tolist()
+
+print(f"Available stable probes: {len(top_probes)}")
+print(stable.head(20))
 
 sizes = list(range(2, len(top_probes) + 1))
+
 means = []
 stds = []
 
@@ -39,7 +44,6 @@ for k in sizes:
 
     clf = make_classifier()
 
-    from sklearn.model_selection import cross_val_score
     scores = cross_val_score(
         clf,
         X_k,
@@ -51,7 +55,15 @@ for k in sizes:
     means.append(scores.mean())
     stds.append(scores.std())
 
-    print(f"{k} genes -> AUC: {scores.mean():.3f} ± {scores.std():.3f}")
+    print(f"{k} probes -> AUC: {scores.mean():.3f} ± {scores.std():.3f}")
+
+sweep = pd.DataFrame({
+    "k": sizes,
+    "mean_auc": means,
+    "std_auc": stds,
+})
+
+sweep.to_csv(processed_dir / "stable_probe_size_sweep.csv", index=False)
 
 plt.figure(figsize=(7, 5))
 plt.plot(sizes, means, marker="o", linewidth=2)
@@ -64,14 +76,14 @@ plt.fill_between(
 
 best_idx = int(np.argmax(means))
 best_k = sizes[best_idx]
-plt.axvline(best_k, linestyle="--")
 
-plt.xlabel("Number of probes in signature")
+plt.axvline(best_k, linestyle="--")
+plt.xlabel("Number of stable probes included")
 plt.ylabel("ROC-AUC")
-plt.title("Signature Size vs Performance")
+plt.title("Exploratory Stable-Probe Sweep")
 plt.tight_layout()
 
-out = "results/figures/signature_size_curve.png"
+out = figures_dir / "stable_probe_size_curve.png"
 plt.savefig(out, dpi=300)
 plt.show()
 

@@ -214,50 +214,84 @@ data/processed/stable_probe_size_sweep.csv
 results/figures/stable_probe_size_curve.png
 ```
 
-## L1 logistic-regression analysis
+## Sparse Signature via L1 Regularization
 
-The repository also includes an L1-regularized logistic-regression analysis:
+While the previous analysis identifies the number of genes required for optimal predictive performance, L1-regularized logistic regression was used to investigate how much the model could be compressed while preserving the underlying disease signal.
 
-```bash
-python scripts/run_signature_l1.py
-```
+### Internal Results
 
-The L1 model acts as a sparse embedded feature selector. While the L2 model distributes weight across correlated transcriptomic features, the L1 model pushes many coefficients exactly to zero and identifies a smaller core signature.
+The best L1 model selected a minimal subset of 3 genes:
 
-This analysis is used to ask a complementary question:
+- ZNF24
+- HMGN3-AS1
+- ZNF568
 
-```text
-What is the smallest set of probes that still captures a large fraction of the signal?
-```
-
-The L1 sweep evaluates different regularization strengths and saves the selected probes and genes for each value of C.
+This sparse signature achieved an internal ROC-AUC of approximately 0.91 ± 0.09, demonstrating that most of the predictive information is concentrated within a very small subset of genes.
 
 ### Interpretation
 
-L1 regularization identified a minimal 3-gene signature (ZNF24, HMGN3-AS1 and ZNF568) that achieved an internal ROC-AUC of 0.91 ± 0.09, confirming that most of the predictive signal is concentrated in a very small subset of genes.
+The L1 results indicate that the endometriosis signal is genuinely sparse. Although the original dataset contains tens of thousands of probes, only three genes are sufficient to recover most of the predictive performance observed with the larger signature.
 
-External validation revealed the limitations of this aggressive compression. On the RNA-seq dataset (GSE135485), the 3-gene signature achieved a ROC-AUC of 0.42, substantially lower than the 0.66 obtained with the larger ranked signature. Conversely, on the independent microarray dataset (GSE25628), the sparse signature achieved a ROC-AUC of 0.90, outperforming the ranked signature (0.77), although only a single gene (ZNF24) could be transferred across platforms.
+This suggests that the disease signal is driven by a compact regulatory core rather than by a large collection of independent biomarkers.
 
-These results suggest that the 3-gene model captures the core biological signal, but the additional genes in the ~7-gene signature provide **redundancy across correlated features, making predictions more resilient to measurement noise, biological heterogeneity, and platform-specific differences. Overall, the project highlights a trade-off between interpretability and generalization: highly compressed signatures are easier to understand, whereas slightly larger signatures transfer more reliably across independent cohorts.
+## External Validation
 
-Output:
+To evaluate the robustness of the identified signatures, both the ranked (~7-gene) signature and the sparse L1 (3-gene) signature were tested on two completely independent datasets generated using different experimental platforms.
 
-```text
-data/processed/signature_l1_sweep.csv
-```
+### Ranked Signature (L2)
 
-## External validation
+#### GSE135485 (RNA-seq)
 
-External validation scripts test whether the discovered signature transfers to independent datasets.
+- Available genes: 6
+- ROC-AUC: 0.66
 
-```bash
-python scripts/validate_gse135485.py
-python scripts/validate_gse25628.py
-```
+Although performance decreases compared to the internal cross-validation, the classifier retains predictive power despite the platform change from microarray to RNA-seq.
 
-These validations are important because transcriptomic signatures can perform well within one dataset but lose performance across studies, technologies, or preprocessing pipelines.
+It should also be noted that this dataset is highly imbalanced (54 endometriosis samples vs 4 controls), making ROC estimates inherently unstable.
 
-The external validation results are therefore interpreted as a test of transferability rather than as a direct replacement for the internal cross-validation results.
+#### GSE25628 (Microarray)
+
+- Available genes: 2
+- ROC-AUC: 0.77
+
+Only two genes from the ranked signature were available after platform mapping. Despite this reduction, the model maintained good discrimination on an independent cohort generated using a different microarray platform (GPL571).
+
+### Interpretation
+
+The ranked signature shows consistent transfer across independent studies. Performance is stronger when transferring between similar technologies (microarray → microarray) than across different technologies (microarray → RNA-seq), suggesting that part of the predictive signal is platform dependent while a substantial component reflects genuine biological variation.
+
+---
+
+### Sparse L1 Signature
+
+#### GSE135485 (RNA-seq)
+
+- Available genes: 3
+- ROC-AUC: 0.42
+
+The minimal signature failed to generalize to the RNA-seq dataset. Although highly predictive within the training cohort, compressing the model to only three genes reduced its robustness to differences in sequencing technology and biological variability.
+
+#### GSE25628 (Microarray)
+
+- Available genes: 1 (ZNF24)
+- ROC-AUC: 0.90
+
+Interestingly, despite only a single transferable gene remaining after platform mapping, the sparse model achieved excellent discrimination on the independent microarray dataset.
+
+This suggests that ZNF24 alone carries a strong disease-associated signal in this cohort, although relying on a single predictor makes the model inherently fragile.
+
+### Interpretation
+
+Together, these results illustrate the trade-off between model simplicity and generalization.
+
+The sparse L1 model successfully identifies the core predictive signal but is more sensitive to platform-specific effects and biological heterogeneity. In contrast, the larger ranked signature contains additional correlated genes that provide redundancy, making predictions more resilient when transferring across independent datasets.
+
+Overall, the results indicate that:
+
+- the 3-gene signature captures the biological core of the disease;
+- the ~7-gene signature provides greater robustness through redundant predictive information;
+- optimal signatures depend on the intended application, balancing interpretability against generalization.
+
 
 ## How to run the project
 

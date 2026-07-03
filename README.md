@@ -182,6 +182,8 @@ Current results:
 
 The best observed performance is obtained with the full 7-probe mapped signature.
 
+![Signature size analysis](results/figures/signature_size_curve.png)
+
 Outputs:
 
 ```text
@@ -255,6 +257,8 @@ It should also be noted that this dataset is highly imbalanced (54 endometriosis
 - ROC-AUC: 0.77
 
 Only two genes from the ranked signature were available after platform mapping. Despite this reduction, the model maintained good discrimination on an independent cohort generated using a different microarray platform (GPL571).
+
+![ROC curves across validation datasets](results/figures/roc_curve_all.png)
 
 ### Interpretation
 

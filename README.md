@@ -240,18 +240,18 @@ To evaluate the robustness of the identified signatures, both the ranked (~7-gen
 
 ### Ranked Signature (L2)
 
-#### GSE135485 (RNA-seq)
+#### GSE135485 (RNA-seq, 54 endometriosis patients,	4 healthy controls)
 
-- Available genes: 6
+- Available genes: 6 (CTU2, ZNF24, NT5DC3, HMGN3-AS1, C11orf54, ZNF568)
 - ROC-AUC: 0.66
 
 Although performance decreases compared to the internal cross-validation, the classifier retains predictive power despite the platform change from microarray to RNA-seq.
 
 It should also be noted that this dataset is highly imbalanced (54 endometriosis samples vs 4 controls), making ROC estimates inherently unstable.
 
-#### GSE25628 (Microarray)
+#### GSE25628 (Microarray, 8 ectopic endometriosis samples,	6 healthy endometrium samples)
 
-- Available genes: 2
+- Available genes: 2 (ZNF24, NT5DC3)
 - ROC-AUC: 0.77
 
 Only two genes from the ranked signature were available after platform mapping. Despite this reduction, the model maintained good discrimination on an independent cohort generated using a different microarray platform (GPL571).
@@ -266,7 +266,7 @@ The ranked signature shows consistent transfer across independent studies. Perfo
 
 #### GSE135485 (RNA-seq)
 
-- Available genes: 3
+- Available genes: 3 (ZNF24, HMGN3-AS1, ZNF568)
 - ROC-AUC: 0.42
 
 The minimal signature failed to generalize to the RNA-seq dataset. Although highly predictive within the training cohort, compressing the model to only three genes reduced its robustness to differences in sequencing technology and biological variability.

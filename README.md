@@ -209,6 +209,8 @@ The purpose is to inspect whether the broader stable-probe pool contains additio
 
 This analysis should be interpreted carefully. The stable-probe pool was already selected using the dataset, so the resulting curve is optimistic and should not be treated as an unbiased validation estimate. It is included as a diagnostic ranking analysis, not as the main performance claim.
 
+![Signature size analysis](results/figures/stable_probe_size_curve.png)
+
 Outputs:
 
 ```text

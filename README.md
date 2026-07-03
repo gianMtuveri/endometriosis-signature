@@ -232,6 +232,14 @@ What is the smallest set of probes that still captures a large fraction of the s
 
 The L1 sweep evaluates different regularization strengths and saves the selected probes and genes for each value of C.
 
+### Interpretation
+
+L1 regularization identified a minimal 3-gene signature (ZNF24, HMGN3-AS1 and ZNF568) that achieved an internal ROC-AUC of 0.91 ± 0.09, confirming that most of the predictive signal is concentrated in a very small subset of genes.
+
+External validation revealed the limitations of this aggressive compression. On the RNA-seq dataset (GSE135485), the 3-gene signature achieved a ROC-AUC of 0.42, substantially lower than the 0.66 obtained with the larger ranked signature. Conversely, on the independent microarray dataset (GSE25628), the sparse signature achieved a ROC-AUC of 0.90, outperforming the ranked signature (0.77), although only a single gene (ZNF24) could be transferred across platforms.
+
+These results suggest that the 3-gene model captures the core biological signal, but the additional genes in the ~7-gene signature provide **redundancy across correlated features, making predictions more resilient to measurement noise, biological heterogeneity, and platform-specific differences. Overall, the project highlights a trade-off between interpretability and generalization: highly compressed signatures are easier to understand, whereas slightly larger signatures transfer more reliably across independent cohorts.
+
 Output:
 
 ```text
